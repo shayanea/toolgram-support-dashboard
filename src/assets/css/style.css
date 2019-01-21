@@ -1,0 +1,177 @@
+@font-face {
+  font-family: "SAMIMBOLD";
+  src: url("../font/Samim-Bold-FD.woff") format("woff"), url("../font/Samim-Bold-FD.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SAMIM";
+  src: url("../font/Samim-FD.woff") format("woff"), url("../font/Samim-FD.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+html,
+body {
+  display: block;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  font-family: "SAMIM";
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  outline: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: #222;
+  -webkit-box-shadow: inset 0 0 0px 9999px white !important;
+}
+
+.zent-notify-content {
+  font-weight: bold;
+}
+
+.zent-loading-container-static .zent-page-mask {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.zent-page-loading .zent-page-mask::before,
+.zent-page-loading .zent-page-mask::after {
+  border: 3px solid transparent;
+}
+
+.zent-page-loading .zent-page-mask::before {
+  background-image: none !important;
+}
+
+.zent-page-loading .zent-page-mask::after {
+  background-color: transparent;
+  border-color: #fff transparent transparent;
+  z-index: 20;
+}
+
+.zent-table .tfoot__page {
+  float: none;
+  display: block;
+}
+
+.zent-pagination {
+  text-align: center;
+}
+
+.zent-dialog-r-backdrop {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.custom-sweetalert {
+  padding: 50px;
+}
+
+.custom-sweetalert .zent-dialog-r-header {
+  display: none;
+}
+
+.custom-sweetalert .zent-dialog-r-body {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.zent-sweetalert-confirm .sweet-confirm-actions {
+  text-align: center;
+}
+
+.custom-width-dropdown .zent-select-popup {
+  padding-right: 0;
+}
+
+.zent-select-popup .zent-select-option {
+  text-align: right;
+}
+
+.custom-sweetalert .zent-btn {
+  border-radius: 6px;
+  width: 145px;
+}
+
+.custom-sweetalert .zent-btn span {
+  font-size: 15px;
+}
+
+.custom-sweetalert .zent-sweetalert-confirm-btn-cancel {
+  border-color: transparent;
+  background-color: #efefef;
+  color: #444;
+}
+
+.custom-sweetalert .zent-sweetalert-confirm-btn-cancel:hover {
+  opacity: 0.7;
+}
+
+.zent-table-container {
+  margin-bottom: 0;
+}
+
+.zent-sweetalert-confirm .zent-btn {
+  height: 40px;
+  line-height: 40px;
+  padding: 0 20px;
+  font-size: 15px;
+}
+
+.zent-sweetalert-confirm .zent-btn+.zent-btn {
+  margin-left: 0;
+  margin-right: 10px;
+}
+
+.dashboard .login-form {
+  margin-bottom: 0;
+}
+
+.dashboard .login-form .zent-form__controls {
+  margin-left: 0;
+  width: 100%;
+}
+
+.dashboard .login-form .zent-form__control-label {
+  display: none;
+}
+
+.dashboard .login-form .zent-input-wrapper {
+  height: 40px;
+  max-height: 40px;
+}
+
+.dashboard .login-form .zent-input {
+  min-width: 250px;
+  border-color: #ddd;
+  border-radius: 4px;
+  outline: none;
+  box-shadow: none;
+}
+
+.dashboard .login-form .submit-btn {
+  width: 100%;
+  border-radius: 4px;
+  background-color: #2576cc;
+  border-color: #2576cc;
+  height: 40px;
+  line-height: 38px;
+  font-size: 16px;
+}
+
+.dashboard .login-form .submit-btn:hover {
+  background-color: #286090;
+  border-color: #286090;
+}
