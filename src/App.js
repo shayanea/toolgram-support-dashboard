@@ -101,9 +101,9 @@ class App extends Component {
               {!disable && <Menu />}
               <Switch>
                 {/* Dashboard */}
-                <Route exact path="/" component={Users} />
+                <AuthRoute exact path="/" component={Users} />
                 {/* User */}
-                <Route exact path="/users" component={Users} />
+                <AuthRoute exact path="/users" component={Users} />
                 {/* Authentication */}
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/forgotpassword" component={ForgotPassword} />
