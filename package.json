@@ -5,7 +5,6 @@
   "dependencies": {
     "axios": "^0.18.0",
     "history": "^4.7.2",
-    "moment": "^2.23.0",
     "moment-jalali": "^0.3.9",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",

@@ -4,45 +4,47 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import { Table, SearchInput, Select } from "zent";
 
-import { getUsers } from "../actions/userActions";
+import { getChannels } from "../actions/channelActions";
 
-class UsersList extends Component {
+class ChannelList extends Component {
   constructor(props) {
     super(props);
-    // moment.loadPersian({ dialect: "persian-modern" });
     this.state = {
       pageSize: 10,
       page: {
         current: 0,
         totalItem: 0
       },
-      datasets: this.props.users.items,
+      datasets: this.props.channels.items,
       searchText: "",
+      accounts: [],
       filters: [{ id: 1, name: "Option 1" }, { id: 2, name: "Option 2" }, { id: 3, name: "Option 3" }]
     };
   }
 
   static propTypes = {
-    users: PropTypes.shape({
+    channels: PropTypes.shape({
       items: PropTypes.array.isRequired,
       isLoading: PropTypes.bool.isRequired,
       size: PropTypes.number.isRequired,
-      page: PropTypes.number.isRequired
+      page: PropTypes.number.isRequired,
+      accounts: PropTypes.array.isRequired
     })
   };
 
   componentDidMount() {
-    this.props.getUsers(this.props.users.size, this.props.users.page);
+    this.props.getChannels(this.props.channels.size, this.props.channels.page, "");
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.users.items !== this.props.users.items)
+    if (prevProps.channels.items !== this.props.channels.items)
       this.setState({
         page: {
-          current: this.props.users.page,
-          totalItem: this.props.users.size
+          current: this.props.channels.page,
+          totalItem: this.props.channels.size
         },
-        datasets: this.props.users.items
+        datasets: this.props.channels.items,
+        accounts: this.props.channels.accounts
       });
   }
 
@@ -57,7 +59,7 @@ class UsersList extends Component {
       page: {
         pageSize: 10,
         current: conf.current,
-        totalItem: this.props.users.size
+        totalItem: this.props.channels.size
       }
     });
     this.props.onPageUpdate(conf.current);
@@ -74,29 +76,50 @@ class UsersList extends Component {
   };
 
   onPressEnter = () => {
-    this.props.users.findUser(this.state.searchText);
+    this.props.channels.findUser(this.state.searchText);
   };
 
   showOption = (e, data) => {
-    this.props.users.filterUser();
+    this.props.channels.filterUser();
+  };
+
+  getAccountNameById = id => {
+    let result = this.state.accounts.find(item => item.accountId === id);
+    return result ? `${result.firstName} ${result.lastName !== null ? result.lastName : ""}` : "----";
   };
 
   render() {
     const columns = [
       {
         title: "شناسه",
-        width: "10%",
+        width: "18%",
         name: "id"
       },
       {
-        title: "ایمیل",
-        width: "40%",
-        name: "email"
+        title: "نام شبکه",
+        width: "18%",
+        name: "name"
       },
       {
-        title: "شماره موبایل",
-        width: "40%",
-        name: "phoneNumber"
+        title: "نوع شبکه",
+        width: "18%",
+        bodyRender: data => {
+          return <div className="channel-type" data-type={data.typeId} />;
+        }
+      },
+      {
+        title: "نام کاربر",
+        width: "18%",
+        bodyRender: data => {
+          return <div>{this.getAccountNameById(data.accountId)}</div>;
+        }
+      },
+      {
+        title: "وضعیت",
+        width: "18%",
+        bodyRender: data => {
+          return "";
+        }
       }
     ];
     const { datasets, page, searchText, filters } = this.state;
@@ -104,7 +127,7 @@ class UsersList extends Component {
       <Container>
         <SearchConatainer>
           <Col>
-            <h2 className="page-title">لیست کاربران</h2>
+            <h2 className="page-title">لیست کانال‌ها</h2>
           </Col>
           <Col>
             <SearchInput value={searchText} placeholder="جستجو" onChange={this.onChange} onPressEnter={this.onPressEnter} />
@@ -112,12 +135,13 @@ class UsersList extends Component {
           </Col>
         </SearchConatainer>
         <Table
-          emptyLabel={"هیچ کاربری در این لیست وجود ندارد."}
+          emptyLabel={"هیچ کانالی در این لیست وجود ندارد."}
           columns={columns}
           datasets={datasets}
           onChange={this.onChange.bind(this)}
           getRowConf={this.getRowConf}
           pageInfo={page}
+          className={"channels-table"}
           rowKey="id"
         />
       </Container>
@@ -145,12 +169,12 @@ const Col = styled.div`
 `;
 
 const mapStateToProps = state => ({
-  users: state.users
+  channels: state.channels
 });
 
 export default connect(
   mapStateToProps,
   {
-    getUsers
+    getChannels
   }
-)(UsersList);
+)(ChannelList);

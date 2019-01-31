@@ -13,9 +13,14 @@ import Menu from "./components/general/menu";
 import Login from "./pages/login";
 import ForgotPassword from "./pages/forgotPassword";
 import Users from "./pages/users";
+import Posts from "./pages/posts";
+import Channels from "./pages/channels";
+import Feedback from "./pages/feedback";
+import Transaction from "./pages/transaction";
+import Withdrawals from "./pages/withdrawals";
 
 const isAuthenticated = () => {
-  return store.getState().auth.isAuthenticated && localStorage.getItem("token");
+  return store.getState().auth.isAuthenticated && localStorage.getItem("USER_INFO");
 };
 
 const AuthRoute = ({ component: Component, ...rest }) => (
@@ -36,7 +41,7 @@ const AuthRoute = ({ component: Component, ...rest }) => (
 );
 
 const NoMatch = () =>
-  store.getState().auth.isAuthenticated && localStorage.getItem("token") ? (
+  store.getState().auth.isAuthenticated && localStorage.getItem("USER_INFO") ? (
     <Redirect
       to={{
         pathname: "/"
@@ -82,8 +87,18 @@ class App extends Component {
         return (document.title = "ورود کاربران");
       case "/forgotpassword":
         return (document.title = "فراموشی رمز عبور");
-      case "/users":
+      case "/user/list":
         return (document.title = "لیست کاربران");
+      case "/post/list":
+        return (document.title = "لیست پست‌ها");
+      case "/channel/list":
+        return (document.title = "لیست کانال‌ها");
+      case "/transaction/list":
+        return (document.title = "لیست سابقه مالی‌ها");
+      case "/withdraw/list":
+        return (document.title = "درخواست‌های برداشت");
+      case "/feedback/list":
+        return (document.title = "لیست پیام‌ها");
       default:
         return this.handleRouteWithParams(path);
     }
@@ -97,13 +112,22 @@ class App extends Component {
       <Provider store={store}>
         <Router history={history}>
           <div className="dashboard">
-            <Container>
-              {!disable && <Menu />}
+            <Container disable={disable}>
+              {!disable ? <Menu /> : null}
               <Switch>
                 {/* Dashboard */}
                 <AuthRoute exact path="/" component={Users} />
-                {/* User */}
-                <AuthRoute exact path="/users" component={Users} />
+                {/* Users */}
+                <AuthRoute exact path="/user/list" component={Users} />
+                {/* Posts */}
+                <AuthRoute exact path="/post/list" component={Posts} />
+                {/* Channels */}
+                <AuthRoute exact path="/channel/list" component={Channels} />
+                {/* Feedback */}
+                <AuthRoute exact path="/feedback/list" component={Feedback} />
+                {/* Transaction */}
+                <AuthRoute exact path="/transaction/list" component={Transaction} />
+                <AuthRoute exact path="/Withdrawals/list" component={Withdrawals} />
                 {/* Authentication */}
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/forgotpassword" component={ForgotPassword} />
@@ -122,6 +146,7 @@ const Container = styled.div`
   display: block;
   background-color: #2e2f3b;
   min-height: 100vh;
+  margin-right: ${props => (props.disable ? 0 : "250px")};
 `;
 
 export default App;

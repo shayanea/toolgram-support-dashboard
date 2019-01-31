@@ -28,7 +28,7 @@ export const loginUser = data => dispatch => {
           isAuthenticated: true
         }
       });
-      history.push("/");
+      history.push("/users");
     })
     .catch(err => {
       Notify.error(err.data !== null && typeof err.data !== "undefined" ? err.data.error.errorDescription : "در برقراری ارتباط مشکلی به وجود آمده است.", 5000);

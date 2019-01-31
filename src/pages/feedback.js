@@ -4,9 +4,9 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import { Table, SearchInput, Select } from "zent";
 
-import { getUsers } from "../actions/userActions";
+import { getFeedbacks } from "../actions/feedbackActions";
 
-class UsersList extends Component {
+class FeedbackList extends Component {
   constructor(props) {
     super(props);
     // moment.loadPersian({ dialect: "persian-modern" });
@@ -16,14 +16,14 @@ class UsersList extends Component {
         current: 0,
         totalItem: 0
       },
-      datasets: this.props.users.items,
+      datasets: this.props.feedback.items,
       searchText: "",
-      filters: [{ id: 1, name: "Option 1" }, { id: 2, name: "Option 2" }, { id: 3, name: "Option 3" }]
+      filters: [{ value: 1, text: "درخواست کمک یا سوال" }, { value: 2, text: "پیشنهاد یا انتقاد" }, { value: 3, text: "گزارش خطای سیستم" }, { value: 4, text: "سایر" }]
     };
   }
 
   static propTypes = {
-    users: PropTypes.shape({
+    feedback: PropTypes.shape({
       items: PropTypes.array.isRequired,
       isLoading: PropTypes.bool.isRequired,
       size: PropTypes.number.isRequired,
@@ -32,17 +32,17 @@ class UsersList extends Component {
   };
 
   componentDidMount() {
-    this.props.getUsers(this.props.users.size, this.props.users.page);
+    this.props.getFeedbacks(this.props.feedback.size, this.props.feedback.page);
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.users.items !== this.props.users.items)
+    if (prevProps.feedback.items !== this.props.feedback.items)
       this.setState({
         page: {
-          current: this.props.users.page,
-          totalItem: this.props.users.size
+          current: this.props.feedback.page,
+          totalItem: this.props.feedback.size
         },
-        datasets: this.props.users.items
+        datasets: this.props.feedback.items
       });
   }
 
@@ -57,7 +57,7 @@ class UsersList extends Component {
       page: {
         pageSize: 10,
         current: conf.current,
-        totalItem: this.props.users.size
+        totalItem: this.props.feedback.size
       }
     });
     this.props.onPageUpdate(conf.current);
@@ -74,11 +74,11 @@ class UsersList extends Component {
   };
 
   onPressEnter = () => {
-    this.props.users.findUser(this.state.searchText);
+    this.props.feedback.findUser(this.state.searchText);
   };
 
   showOption = (e, data) => {
-    this.props.users.filterUser();
+    this.props.feedback.filterUser();
   };
 
   render() {
@@ -104,15 +104,15 @@ class UsersList extends Component {
       <Container>
         <SearchConatainer>
           <Col>
-            <h2 className="page-title">لیست کاربران</h2>
+            <h2 className="page-title">لیست پیام‌ها</h2>
           </Col>
           <Col>
-            <SearchInput value={searchText} placeholder="جستجو" onChange={this.onChange} onPressEnter={this.onPressEnter} />
+            {/* <SearchInput value={searchText} placeholder="جستجو" onChange={this.onChange} onPressEnter={this.onPressEnter} /> */}
             <Select placeholder="فیلتر بر اساس" optionValue="id" optionText="name" data={filters} onChange={this.showOption} />
           </Col>
         </SearchConatainer>
         <Table
-          emptyLabel={"هیچ کاربری در این لیست وجود ندارد."}
+          emptyLabel={"هیچ پیامی در این لیست وجود ندارد."}
           columns={columns}
           datasets={datasets}
           onChange={this.onChange.bind(this)}
@@ -145,12 +145,12 @@ const Col = styled.div`
 `;
 
 const mapStateToProps = state => ({
-  users: state.users
+  feedback: state.feedback
 });
 
 export default connect(
   mapStateToProps,
   {
-    getUsers
+    getFeedbacks
   }
-)(UsersList);
+)(FeedbackList);
