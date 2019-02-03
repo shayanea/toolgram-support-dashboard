@@ -17,6 +17,7 @@ class FeedbackList extends Component {
         totalItem: 0
       },
       datasets: this.props.feedback.items,
+      accounts: [],
       searchText: "",
       filters: [{ value: 1, text: "درخواست کمک یا سوال" }, { value: 2, text: "پیشنهاد یا انتقاد" }, { value: 3, text: "گزارش خطای سیستم" }, { value: 4, text: "سایر" }]
     };
@@ -25,14 +26,16 @@ class FeedbackList extends Component {
   static propTypes = {
     feedback: PropTypes.shape({
       items: PropTypes.array.isRequired,
+      accounts: PropTypes.array.isRequired,
       isLoading: PropTypes.bool.isRequired,
       size: PropTypes.number.isRequired,
-      page: PropTypes.number.isRequired
+      page: PropTypes.number.isRequired,
+      status: PropTypes.number.isRequired
     })
   };
 
   componentDidMount() {
-    this.props.getFeedbacks(this.props.feedback.size, this.props.feedback.page);
+    this.props.getFeedbacks(this.props.feedback.size, this.props.feedback.page, this.props.feedback.status);
   }
 
   componentDidUpdate(prevProps) {
@@ -42,7 +45,8 @@ class FeedbackList extends Component {
           current: this.props.feedback.page,
           totalItem: this.props.feedback.size
         },
-        datasets: this.props.feedback.items
+        datasets: this.props.feedback.items,
+        accounts: this.props.feedback.accounts
       });
   }
 
@@ -78,7 +82,12 @@ class FeedbackList extends Component {
   };
 
   showOption = (e, data) => {
-    this.props.feedback.filterUser();
+    this.props.getFeedbacks(this.props.feedback.size, this.props.feedback.page, data.value);
+  };
+
+  getAccountNameById = id => {
+    let result = this.state.accounts.find(item => item.accountId === id);
+    return result ? `${result.firstName} ${result.lastName !== null ? result.lastName : ""}` : "----";
   };
 
   render() {
@@ -89,14 +98,24 @@ class FeedbackList extends Component {
         name: "id"
       },
       {
-        title: "ایمیل",
-        width: "40%",
-        name: "email"
+        title: "نام کاربر",
+        width: "20%",
+        bodyRender: data => {
+          return <div>{this.getAccountNameById(data.accountId)}</div>;
+        }
       },
       {
-        title: "شماره موبایل",
+        title: "متن پیغام",
         width: "40%",
-        name: "phoneNumber"
+        name: "text"
+      },
+      {
+        title: "نوع درخواست",
+        width: "40%",
+        bodyRender: data => {
+          let result = this.state.filters.find(item => item.id === data.typeId);
+          return result ? result.text : "----";
+        }
       }
     ];
     const { datasets, page, searchText, filters } = this.state;
@@ -108,7 +127,7 @@ class FeedbackList extends Component {
           </Col>
           <Col>
             {/* <SearchInput value={searchText} placeholder="جستجو" onChange={this.onChange} onPressEnter={this.onPressEnter} /> */}
-            <Select placeholder="فیلتر بر اساس" optionValue="id" optionText="name" data={filters} onChange={this.showOption} />
+            <Select placeholder="فیلتر بر اساس" optionValue="value" optionText="text" data={filters} onChange={this.showOption} />
           </Col>
         </SearchConatainer>
         <Table
