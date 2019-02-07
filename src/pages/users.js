@@ -104,7 +104,7 @@ class UsersList extends Component {
       <Container>
         <SearchConatainer>
           <Col>
-            <h2 className="page-title">لیست کاربران</h2>
+            <h2 className="page-title">فهرست کاربران</h2>
           </Col>
           <Col>
             <SearchInput value={searchText} placeholder="جستجو" onChange={this.onChange} onPressEnter={this.onPressEnter} />
@@ -112,7 +112,7 @@ class UsersList extends Component {
           </Col>
         </SearchConatainer>
         <Table
-          emptyLabel={"هیچ کاربری در این لیست وجود ندارد."}
+          emptyLabel={"هیچ کاربری در این فهرست وجود ندارد."}
           columns={columns}
           datasets={datasets}
           onChange={this.onChange.bind(this)}

@@ -127,7 +127,7 @@ class ChannelList extends Component {
       <Container>
         <SearchConatainer>
           <Col>
-            <h2 className="page-title">لیست کانال‌ها</h2>
+            <h2 className="page-title">فهرست کانال‌ها</h2>
           </Col>
           <Col>
             <SearchInput value={searchText} placeholder="جستجو" onChange={this.onChange} onPressEnter={this.onPressEnter} />
@@ -135,7 +135,7 @@ class ChannelList extends Component {
           </Col>
         </SearchConatainer>
         <Table
-          emptyLabel={"هیچ کانالی در این لیست وجود ندارد."}
+          emptyLabel={"هیچ کانالی در این فهرست وجود ندارد."}
           columns={columns}
           datasets={datasets}
           onChange={this.onChange.bind(this)}

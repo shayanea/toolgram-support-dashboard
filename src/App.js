@@ -18,6 +18,7 @@ import Channels from "./pages/channels";
 import Feedback from "./pages/feedback";
 import Transaction from "./pages/transaction";
 import Withdrawals from "./pages/withdrawals";
+import Balances from "./pages/balances";
 
 const isAuthenticated = () => {
   return store.getState().auth.isAuthenticated && localStorage.getItem("USER_INFO");
@@ -88,17 +89,17 @@ class App extends Component {
       case "/forgotpassword":
         return (document.title = "فراموشی رمز عبور");
       case "/user/list":
-        return (document.title = "لیست کاربران");
+        return (document.title = "فهرست کاربران");
       case "/post/list":
-        return (document.title = "لیست پست‌ها");
+        return (document.title = "فهرست پست‌ها");
       case "/channel/list":
-        return (document.title = "لیست کانال‌ها");
+        return (document.title = "فهرست کانال‌ها");
       case "/transaction/list":
-        return (document.title = "لیست سابقه مالی‌ها");
+        return (document.title = "فهرست سابقه مالی‌ها");
       case "/withdraw/list":
         return (document.title = "درخواست‌های برداشت");
       case "/feedback/list":
-        return (document.title = "لیست پیام‌ها");
+        return (document.title = "فهرست پیام‌ها");
       default:
         return this.handleRouteWithParams(path);
     }
@@ -128,6 +129,7 @@ class App extends Component {
                 {/* Transaction */}
                 <AuthRoute exact path="/transaction/list" component={Transaction} />
                 <AuthRoute exact path="/Withdrawals/list" component={Withdrawals} />
+                <AuthRoute exact path="/balances/list" component={Balances} />
                 {/* Authentication */}
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/forgotpassword" component={ForgotPassword} />

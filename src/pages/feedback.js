@@ -123,7 +123,7 @@ class FeedbackList extends Component {
       <Container>
         <SearchConatainer>
           <Col>
-            <h2 className="page-title">لیست پیام‌ها</h2>
+            <h2 className="page-title">فهرست پیام‌ها</h2>
           </Col>
           <Col>
             {/* <SearchInput value={searchText} placeholder="جستجو" onChange={this.onChange} onPressEnter={this.onPressEnter} /> */}
@@ -131,7 +131,7 @@ class FeedbackList extends Component {
           </Col>
         </SearchConatainer>
         <Table
-          emptyLabel={"هیچ پیامی در این لیست وجود ندارد."}
+          emptyLabel={"هیچ پیامی در این فهرست وجود ندارد."}
           columns={columns}
           datasets={datasets}
           onChange={this.onChange.bind(this)}

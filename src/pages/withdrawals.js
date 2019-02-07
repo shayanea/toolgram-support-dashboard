@@ -173,7 +173,7 @@ class WithdrawList extends Component {
           </Col>
         </SearchConatainer>
         <Table
-          emptyLabel={"هیچ سابقه‌ای در این لیست وجود ندارد."}
+          emptyLabel={"هیچ سابقه‌ای در این فهرست وجود ندارد."}
           columns={columns}
           datasets={datasets}
           onChange={this.onChange.bind(this)}

@@ -57,6 +57,8 @@ class MenuListContainer extends Component {
         break;
       case "5-2":
         this.props.history.push("/transaction/list");
+      case "5-3":
+        this.props.history.push("/balances/list");
         break;
       case "6-1":
         this.props.history.push("/feedback/list");
@@ -95,23 +97,22 @@ class MenuListContainer extends Component {
         <Menu mode="inline" onClick={this.onMenuItemClicked}>
           <MenuItem>پیشخوان</MenuItem>
           <SubMenu title="کاربران‌ها">
-            <MenuItem key="1-1">لیست کاربران‌ها</MenuItem>
-            <MenuItem key="1-2">درج کاربران‌</MenuItem>
+            <MenuItem key="1-1">فهرست کاربران‌ها</MenuItem>
+            <MenuItem key="1-2">کاربران غیر فعال</MenuItem>
           </SubMenu>
           <SubMenu title="کانال‌ها">
-            <MenuItem key="2-1">لیست کانال‌ها</MenuItem>
-            <MenuItem key="2-2">درج کانال‌</MenuItem>
+            <MenuItem key="2-1">فهرست کانال‌ها</MenuItem>
+            <MenuItem key="2-2">کانال‌ها‌ی غیر فعال</MenuItem>
           </SubMenu>
-          <SubMenu title="پست‌ها">
-            <MenuItem key="3-1">لیست پست‌ها</MenuItem>
-            <MenuItem key="3-2">درج پست</MenuItem>
-          </SubMenu>
+          <MenuItem key="3-1">فهرست پست‌ها</MenuItem>
           <SubMenu title="دریافت‌ها و پرداخت‌ها">
             <MenuItem key="5-1">درخواست‌های برداشت</MenuItem>
-            <MenuItem key="5-2">سابقه‌ی مالی کاربران</MenuItem>
+            <MenuItem key="5-2">سوابق مالی</MenuItem>
+            <MenuItem key="5-3">سوابق مالی کاربران</MenuItem>
           </SubMenu>
-          <MenuItem>ایتم‌های فروشگاه</MenuItem>
-          <MenuItem key="6-1">پیام‌ها</MenuItem>
+          <MenuItem key="6-1">ایتم‌های فروشگاه</MenuItem>
+          <MenuItem key="7-1">پیام‌ها</MenuItem>
+          <MenuItem key="8-1">کد تخفیف</MenuItem>
           <MenuItem>تنظیمات</MenuItem>
         </Menu>
         {!isLoading && (

@@ -229,7 +229,7 @@ class PostsList extends Component {
           </Col>
         </SearchConatainer>
         <Table
-          emptyLabel={"هیچ پستی در این لیست وجود ندارد."}
+          emptyLabel={"هیچ پستی در این فهرست وجود ندارد."}
           columns={columns}
           datasets={datasets}
           onChange={this.onChange.bind(this)}

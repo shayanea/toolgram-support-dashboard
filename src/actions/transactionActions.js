@@ -2,17 +2,26 @@ import * as type from "./type";
 import axios from "../utils/requestConfig";
 import { Notify } from "zent";
 
-const getAccounts = (array, size, page, items) => dispatch => {
+const getAccounts = array => {
   let ids = array.map(e => e.id).join(",");
-  return axios
-    .get(`/publicprofiles?AccountId=${ids}&AccountId_op=in`)
+  return axios.get(`/publicprofiles?AccountId=${ids}&AccountId_op=in`);
+};
+
+const getProfiles = array => {
+  let ids = array.map(e => e.id).join(",");
+  return axios.get(`/accounts?AccountId=${ids}&AccountId_op=in`);
+};
+
+const getAccountsAndProfiles = (array, size, page, items, actionType) => dispatch => {
+  return Promise.all([getAccounts(array), getProfiles(array)])
     .then(res => {
       dispatch({
-        type: type.FETCH_TRANSACTIONS,
+        type: actionType,
         payload: {
           isLoading: false,
           items,
-          accounts: res.data.data,
+          accounts: res[0].data.data,
+          profiles: res[1].data.data,
           size,
           page
         }
@@ -21,11 +30,12 @@ const getAccounts = (array, size, page, items) => dispatch => {
     .catch(err => {
       Notify.error(err.data !== null && typeof err.data !== "undefined" ? err.data.error.errorDescription : "در برقراری ارتباط مشکلی به وجود آمده است.", 5000);
       dispatch({
-        type: type.FETCH_TRANSACTIONS,
+        type: actionType,
         payload: {
           isLoading: false,
           items: [],
           accounts: [],
+          profiles: [],
           size,
           page
         }
@@ -40,6 +50,7 @@ export const getTransaction = (size, page) => dispatch => {
       isLoading: true,
       items: [],
       accounts: [],
+      profiles: [],
       size,
       page
     }
@@ -52,7 +63,7 @@ export const getTransaction = (size, page) => dispatch => {
         res.data.data.forEach(item => {
           array.push({ id: item.accountId });
         });
-        return dispatch(getAccounts(array, size, page, res.data.data));
+        return dispatch(getAccountsAndProfiles(array, size, page, res.data.data, type.FETCH_TRANSACTIONS));
       }
       dispatch({
         type: type.FETCH_TRANSACTIONS,
@@ -60,6 +71,7 @@ export const getTransaction = (size, page) => dispatch => {
           isLoading: true,
           items: [],
           accounts: [],
+          profiles: [],
           size,
           page
         }
@@ -73,6 +85,57 @@ export const getTransaction = (size, page) => dispatch => {
           isLoading: false,
           items: [],
           accounts: [],
+          profiles: [],
+          size,
+          page
+        }
+      });
+    });
+};
+
+export const getUserBalances = (size, page) => dispatch => {
+  dispatch({
+    type: type.FETCH_BALANCES,
+    payload: {
+      isLoading: true,
+      items: [],
+      accounts: [],
+      profiles: [],
+      size,
+      page
+    }
+  });
+  axios
+    .get(`/accountbalances?_pageSize=${size}&_pageNumber=${page}`)
+    .then(res => {
+      if (res.data.data.length) {
+        let array = [];
+        res.data.data.forEach(item => {
+          array.push({ id: item.accountId });
+        });
+        return dispatch(getAccountsAndProfiles(array, size, page, res.data.data, type.FETCH_BALANCES));
+      }
+      dispatch({
+        type: type.FETCH_BALANCES,
+        payload: {
+          isLoading: true,
+          items: [],
+          accounts: [],
+          profiles: [],
+          size,
+          page
+        }
+      });
+    })
+    .catch(err => {
+      Notify.error(err.data !== null && typeof err.data !== "undefined" ? err.data.error.errorDescription : "در برقراری ارتباط مشکلی به وجود آمده است.", 5000);
+      dispatch({
+        type: type.FETCH_BALANCES,
+        payload: {
+          isLoading: false,
+          items: [],
+          accounts: [],
+          profiles: [],
           size,
           page
         }

@@ -5,7 +5,7 @@ import styled from "styled-components";
 import moment from "moment-jalali";
 import { Table, SearchInput } from "zent";
 
-import { getTransaction, clearState } from "../actions/transactionActions";
+import { getUserBalances, clearState } from "../actions/transactionActions";
 
 class TransactionList extends Component {
   constructor(props) {
@@ -19,7 +19,8 @@ class TransactionList extends Component {
       },
       datasets: this.props.transactions.items,
       searchText: "",
-      accounts: []
+      accounts: [],
+      profiles: []
     };
   }
 
@@ -27,6 +28,7 @@ class TransactionList extends Component {
     transactions: PropTypes.shape({
       items: PropTypes.array.isRequired,
       accounts: PropTypes.array.isRequired,
+      profiles: PropTypes.array.isRequired,
       isLoading: PropTypes.bool.isRequired,
       size: PropTypes.number.isRequired,
       page: PropTypes.number.isRequired
@@ -34,7 +36,7 @@ class TransactionList extends Component {
   };
 
   componentDidMount() {
-    this.props.getTransaction(this.props.transactions.size, this.props.transactions.page, this.props.transactions.search);
+    this.props.getUserBalances(this.props.transactions.size, this.props.transactions.page, this.props.transactions.search);
   }
 
   componentDidUpdate(prevProps) {
@@ -45,7 +47,8 @@ class TransactionList extends Component {
           totalItem: this.props.transactions.size
         },
         datasets: this.props.transactions.items,
-        accounts: this.props.transactions.accounts
+        accounts: this.props.transactions.accounts,
+        profiles: this.props.transactions.profiles
       });
   }
 
@@ -89,6 +92,16 @@ class TransactionList extends Component {
     return result ? `${result.firstName} ${result.lastName !== null ? result.lastName : ""}` : "----";
   };
 
+  getAccountEmailById = id => {
+    let result = this.state.accounts.find(item => item.accountId === id);
+    return result ? result.email : "----";
+  };
+
+  getAccountPhoneNumberById = id => {
+    let result = this.state.profiles.find(item => item.id === id);
+    return result ? result.phoneNumber : "----";
+  };
+
   componentWillUnmount() {
     this.props.clearState();
   }
@@ -96,46 +109,51 @@ class TransactionList extends Component {
   render() {
     const columns = [
       {
-        title: "شـرح ",
-        width: "28%",
-        bodyRender: data => {
-          return (
-            <div style={{ textAlign: "right", paddingRight: "25px" }}>
-              {data.descriptionType !== 6 ? <span className={this.actionType(data.amount)} /> : <span className="cancel" />}
-              {data.description}
-            </div>
-          );
-        }
+        title: "شماره کاربری",
+        width: "10%",
+        name: "accountId"
       },
       {
         title: "نام کاربر",
-        width: "18%",
+        width: "20%",
         bodyRender: data => {
           return <div>{this.getAccountNameById(data.accountId)}</div>;
         }
       },
       {
-        title: "مبلغ",
-        width: "18%",
-        name: "amount",
+        title: "ایمیل",
+        width: "25%",
         bodyRender: data => {
-          return <React.Fragment>{parseFloat(data.amounts[0].value).toLocaleString("fa")} تومان</React.Fragment>;
+          return <div>{this.getAccountEmailById(data.accountId)}</div>;
         }
       },
       {
-        title: "تاریـخ",
-        name: "creationDate",
-        width: "18%",
+        title: "شماره تماس",
+        width: "15%",
         bodyRender: data => {
-          return moment(data.dateTime)
-            .local()
-            .format("jDD jMMMM jYYYY - HH:mm");
+          return <div>{this.getAccountPhoneNumberById(data.accountId)}</div>;
         }
       },
       {
-        title: "شماره فاکتور",
-        width: "18%",
-        name: "id"
+        title: "موجودی",
+        width: "20%",
+        bodyRender: data => {
+          return <React.Fragment>{parseFloat(data.balance).toLocaleString("fa")} تومان</React.Fragment>;
+        }
+      },
+      {
+        title: "قابل برداشت",
+        width: "20%",
+        bodyRender: data => {
+          return <React.Fragment>{parseFloat(data.takableBalance).toLocaleString("fa")} تومان</React.Fragment>;
+        }
+      },
+      {
+        title: "عملیات",
+        width: "20%",
+        bodyRender: data => {
+          return "";
+        }
       }
     ];
     const { datasets, page, searchText } = this.state;
@@ -190,7 +208,7 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   {
-    getTransaction,
+    getUserBalances,
     clearState
   }
 )(TransactionList);
