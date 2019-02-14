@@ -44,7 +44,7 @@ class MenuListContainer extends Component {
         this.props.history.push("/channel/list");
         break;
       case "2-2":
-        this.props.history.push("/channel/list");
+        this.props.history.push("/channel/ban/list");
         break;
       case "3-1":
         this.props.history.push("/post/list");
@@ -57,11 +57,15 @@ class MenuListContainer extends Component {
         break;
       case "5-2":
         this.props.history.push("/transaction/list");
+        break;
       case "5-3":
         this.props.history.push("/balances/list");
         break;
-      case "6-1":
+      case "7-1":
         this.props.history.push("/feedback/list");
+        break;
+      case "9-1":
+        this.props.history.push("/setting");
         break;
       default:
         this.props.history.push("/");
@@ -113,7 +117,7 @@ class MenuListContainer extends Component {
           <MenuItem key="6-1">ایتم‌های فروشگاه</MenuItem>
           <MenuItem key="7-1">پیام‌ها</MenuItem>
           <MenuItem key="8-1">کد تخفیف</MenuItem>
-          <MenuItem>تنظیمات</MenuItem>
+          <MenuItem key="9-1">تنظیمات</MenuItem>
         </Menu>
         {!isLoading && (
           <UserContainer>

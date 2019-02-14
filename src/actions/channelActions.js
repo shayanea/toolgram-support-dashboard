@@ -2,7 +2,7 @@ import * as type from "./type";
 import axios from "../utils/requestConfig";
 import { Notify } from "zent";
 
-const getAccounts = (array, size, page, status, items) => dispatch => {
+const getAccounts = (array, size, page, search, items) => dispatch => {
   let ids = array.map(e => e.id).join(",");
   return axios
     .get(`/publicprofiles?AccountId=${ids}&AccountId_op=in`)
@@ -15,7 +15,7 @@ const getAccounts = (array, size, page, status, items) => dispatch => {
           accounts: res.data.data,
           size,
           page,
-          status
+          search
         }
       });
     })
@@ -29,13 +29,13 @@ const getAccounts = (array, size, page, status, items) => dispatch => {
           accounts: [],
           size,
           page,
-          status
+          search
         }
       });
     });
 };
 
-export const getChannels = (size, page, status) => dispatch => {
+export const getChannels = (size, page, status, search) => dispatch => {
   dispatch({
     type: type.FETCH_CHANNELS,
     payload: {
@@ -43,18 +43,20 @@ export const getChannels = (size, page, status) => dispatch => {
       items: [],
       accounts: [],
       size,
-      page
+      page,
+      search
     }
   });
+  let searchQuery = search !== "" ? `&Name=${search}&Name_op=has` : "";
   axios
-    .get(`/channels?_pageSize=${size}&_pageNumber=${page}`)
+    .get(`/channels?_pageSize=10&_pageNumber=${page}&BanStatusId=${status}&BanStatusId_op=in${searchQuery}`)
     .then(res => {
       if (res.data.data.length) {
         let array = [];
         res.data.data.forEach(item => {
           array.push({ id: item.accountId });
         });
-        return dispatch(getAccounts(array, size, page, status, res.data.data));
+        return dispatch(getAccounts(array, (size = res.data.meta.totalCount), page, search, res.data.data));
       }
       dispatch({
         type: type.FETCH_CHANNELS,
@@ -64,7 +66,7 @@ export const getChannels = (size, page, status) => dispatch => {
           accounts: [],
           size,
           page,
-          status
+          search
         }
       });
     })
@@ -77,7 +79,8 @@ export const getChannels = (size, page, status) => dispatch => {
           items: [],
           accounts: [],
           size,
-          page
+          page,
+          search
         }
       });
     });

@@ -2,17 +2,33 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { Table, Select, Button, Portal, Icon, Input, Notify } from "zent";
-import axios from "../utils/requestConfig";
+import { Table, SearchInput, Button, Notify, Portal, Icon } from "zent";
 
-import { getFeedbacks } from "../actions/feedbackActions";
+import axios from "../../utils/requestConfig";
+import { getChannels } from "../../actions/channelActions";
 
 const WrappedPortal = Portal.withNonScrollable(Portal.withESCToClose(Portal));
 
-class SendMessage extends Component {
+class ActiveChannel extends Component {
   state = {
     message: "",
     isLoading: false
+  };
+
+  componentDidMount() {
+    this.getNotes();
+  }
+
+  getNotes = () => {
+    return axios
+      .get(`/notes?EntityId=${this.props.selectedItem}&EntityId_op=in`)
+      .then(res => {
+        let result = res.data.data.pop();
+        this.setState({ message: result.body });
+      })
+      .catch(err => {
+        Notify.error(err.data !== null && typeof err.data !== "undefined" ? err.data.error.errorDescription : "در برقراری ارتباط مشکلی به وجود آمده است.", 5000);
+      });
   };
 
   handleChange = e => this.setState({ message: e.target.value });
@@ -21,11 +37,13 @@ class SendMessage extends Component {
     if (this.state.message !== "") {
       this.setState({ isLoading: true });
       return axios
-        .post("/feedback/send", {})
+        .post("/channels/unbanned", {
+          channelId: this.props.selectedItem,
+          noteBody: this.state.message
+        })
         .then(res => {
           this.setState({ isLoading: false });
-          Notify.success("پاسخ با موفقیت ارسال گردید.", 5000);
-          this.props.hideModal();
+          this.props.refreshData();
         })
         .catch(err => {
           this.setState({ isLoading: false });
@@ -35,22 +53,23 @@ class SendMessage extends Component {
   };
 
   render() {
-    const { isLoading } = this.state;
+    const { isLoading, message } = this.state;
     const { modalStatus, hideModal } = this.props;
     return (
       <WrappedPortal visible={modalStatus} onClickAway={hideModal} onClose={hideModal} className="layer" style={{ background: "rgba(0, 0, 0, 0.2)" }} useLayerForClickAway>
         <div className="custom-modal">
           <div className="modal-header">
-            <span>ارسال پاسخ به کاربر</span>
+            <span>تغییر وضعیت شبکه اجتماعی</span>
             <Icon type="close" onClick={hideModal} />
           </div>
           <div className="modal-body">
-            <label>متن پبام</label>
-            <Input type="textarea" onChange={this.handleChange} maxLength={100} showCount autoSize />
+            <p>آیا مطمیین به فعال کردن این شبکه اجتماعی هستید؟</p>
+            {/* <Input type="textarea" onChange={this.handleChange} maxLength={100} value={message} showCount autoSize /> */}
+            <p>توضیحات: {message}</p>
           </div>
           <div className="modal-footer">
             <Button type="primary" onClick={this.submit} loading={isLoading}>
-              ارسال
+              تایید
             </Button>
           </div>
         </div>
@@ -59,7 +78,7 @@ class SendMessage extends Component {
   }
 }
 
-class FeedbackList extends Component {
+class ChannelList extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -68,38 +87,38 @@ class FeedbackList extends Component {
         current: 0,
         totalItem: 0
       },
-      datasets: this.props.feedback.items,
+      datasets: this.props.channels.items,
+      searchText: "",
       accounts: [],
-      filters: [{ value: 1, text: "درخواست کمک یا سوال" }, { value: 2, text: "پیشنهاد یا انتقاد" }, { value: 3, text: "گزارش خطای سیستم" }, { value: 4, text: "سایر" }],
       modalStatus: false,
       selectedItem: null
     };
   }
 
   static propTypes = {
-    feedback: PropTypes.shape({
+    channels: PropTypes.shape({
       items: PropTypes.array.isRequired,
-      accounts: PropTypes.array.isRequired,
       isLoading: PropTypes.bool.isRequired,
       size: PropTypes.number.isRequired,
       page: PropTypes.number.isRequired,
-      status: PropTypes.number.isRequired
+      accounts: PropTypes.array.isRequired,
+      search: PropTypes.string.isRequired
     })
   };
 
   componentDidMount() {
-    this.props.getFeedbacks(this.props.feedback.size, this.props.feedback.page, this.props.feedback.status);
+    this.props.getChannels(this.props.channels.size, this.props.channels.page, "2,3", this.props.channels.search);
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.feedback.items !== this.props.feedback.items)
+    if (prevProps.channels.items !== this.props.channels.items)
       this.setState({
         page: {
-          current: this.props.feedback.page,
-          totalItem: this.props.feedback.size
+          current: this.props.channels.page,
+          totalItem: this.props.channels.size
         },
-        datasets: this.props.feedback.items,
-        accounts: this.props.feedback.accounts
+        datasets: this.props.channels.items,
+        accounts: this.props.channels.accounts
       });
   }
 
@@ -114,7 +133,7 @@ class FeedbackList extends Component {
       page: {
         pageSize: 10,
         current: conf.current,
-        totalItem: this.props.feedback.size
+        totalItem: this.props.channels.size
       }
     });
     this.props.onPageUpdate(conf.current);
@@ -126,16 +145,12 @@ class FeedbackList extends Component {
 
   onChange = evt => {
     this.setState({
-      searchText: evt.target.searchText
+      searchText: evt.target.value
     });
   };
 
   onPressEnter = () => {
-    this.props.feedback.findUser(this.state.searchText);
-  };
-
-  showOption = (e, data) => {
-    this.props.getFeedbacks(this.props.feedback.size, this.props.feedback.page, data.value);
+    this.props.getChannels(this.props.channels.size, this.props.channels.page, "2,3", this.state.searchText);
   };
 
   getAccountNameById = id => {
@@ -143,65 +158,73 @@ class FeedbackList extends Component {
     return result ? `${result.firstName} ${result.lastName !== null ? result.lastName : ""}` : "----";
   };
 
-  hideModal = () => this.setState({ modalStatus: false });
+  onHide = () => this.setState({ modalStatus: false });
+
+  refreshData = () => {
+    this.setState({ modalStatus: false });
+    this.props.getChannels(this.props.channels.size, this.props.channels.page, "2,3", this.props.channels.search);
+  };
 
   render() {
     const columns = [
       {
         title: "شناسه",
+        width: "18%",
         name: "id"
       },
       {
+        title: "نام شبکه",
+        width: "18%",
+        name: "name"
+      },
+      {
+        title: "نوع شبکه",
+        width: "18%",
+        bodyRender: data => {
+          return <div className="channel-type" data-type={data.typeId} />;
+        }
+      },
+      {
         title: "نام کاربر",
+        width: "18%",
         bodyRender: data => {
           return <div>{this.getAccountNameById(data.accountId)}</div>;
         }
       },
       {
-        title: "متن پیغام",
-        width: "35%",
-        name: "text"
-      },
-      {
-        title: "نوع درخواست",
-        bodyRender: data => {
-          console.log(data.typeId);
-          let result = this.state.filters.find(item => item.value === Number(data.typeId));
-          return result ? result.text : "----";
-        }
-      },
-      {
-        title: "",
+        title: "وضعیت",
+        width: "18%",
         bodyRender: data => {
           return (
-            <Button type="primary" className="table-btn" icon="im-o" onClick={() => this.setState({ modalStatus: true, selectedItem: data.id })}>
-              ارسال پاسخ
+            <Button type="primary" className="table-btn" icon="check" onClick={() => this.setState({ modalStatus: true, selectedItem: data.id })}>
+              فعال
             </Button>
           );
         }
       }
     ];
-    const { datasets, page, filters, modalStatus } = this.state;
+    const { datasets, page, searchText, modalStatus, selectedItem } = this.state;
     return (
       <Container>
         <SearchConatainer>
           <Col>
-            <h2 className="page-title">فهرست پیام‌ها</h2>
+            <h2 className="page-title">فهرست کانال‌ها</h2>
           </Col>
           <Col>
-            <Select placeholder="فیلتر بر اساس" optionValue="value" optionText="text" data={filters} onChange={this.showOption} />
+            <SearchInput value={searchText} placeholder="جستجو" onChange={this.onChange} onPressEnter={this.onPressEnter} />
           </Col>
         </SearchConatainer>
         <Table
-          emptyLabel={"هیچ پیامی در این فهرست وجود ندارد."}
+          emptyLabel={"هیچ کانالی در این فهرست وجود ندارد."}
           columns={columns}
           datasets={datasets}
           onChange={this.onChange.bind(this)}
           getRowConf={this.getRowConf}
           pageInfo={page}
+          className={"channels-table"}
           rowKey="id"
         />
-        <SendMessage modalStatus={modalStatus} hideModal={this.hideModal} />
+        {modalStatus && <ActiveChannel modalStatus={modalStatus} hideModal={this.onHide} selectedItem={selectedItem} refreshData={this.refreshData} />}
       </Container>
     );
   }
@@ -227,12 +250,12 @@ const Col = styled.div`
 `;
 
 const mapStateToProps = state => ({
-  feedback: state.feedback
+  channels: state.channels
 });
 
 export default connect(
   mapStateToProps,
   {
-    getFeedbacks
+    getChannels
   }
-)(FeedbackList);
+)(ChannelList);

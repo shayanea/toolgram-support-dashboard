@@ -5,7 +5,8 @@ const initalState = {
   items: [],
   accounts: [],
   size: 10,
-  page: 1
+  page: 1,
+  search: ""
 };
 
 export default function(state = initalState, action) {
@@ -17,7 +18,8 @@ export default function(state = initalState, action) {
         size: action.payload.size,
         page: action.payload.page,
         items: action.payload.items,
-        accounts: action.payload.accounts
+        accounts: action.payload.accounts,
+        search: action.payload.search
       };
     default:
       return state;

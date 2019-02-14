@@ -27,6 +27,7 @@ class TransactionList extends Component {
     transactions: PropTypes.shape({
       items: PropTypes.array.isRequired,
       accounts: PropTypes.array.isRequired,
+      profiles: PropTypes.array.isRequired,
       isLoading: PropTypes.bool.isRequired,
       size: PropTypes.number.isRequired,
       page: PropTypes.number.isRequired

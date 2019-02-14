@@ -14,11 +14,13 @@ import Login from "./pages/login";
 import ForgotPassword from "./pages/forgotPassword";
 import Users from "./pages/users";
 import Posts from "./pages/posts";
-import Channels from "./pages/channels";
+import ChannelsList from "./pages/channel/list";
+import BanChannelsList from "./pages/channel/banList";
 import Feedback from "./pages/feedback";
 import Transaction from "./pages/transaction";
 import Withdrawals from "./pages/withdrawals";
 import Balances from "./pages/balances";
+import Setting from "./pages/setting";
 
 const isAuthenticated = () => {
   return store.getState().auth.isAuthenticated && localStorage.getItem("USER_INFO");
@@ -100,6 +102,8 @@ class App extends Component {
         return (document.title = "درخواست‌های برداشت");
       case "/feedback/list":
         return (document.title = "فهرست پیام‌ها");
+      case "/setting":
+        return (document.title = "تنظیمات");
       default:
         return this.handleRouteWithParams(path);
     }
@@ -123,13 +127,16 @@ class App extends Component {
                 {/* Posts */}
                 <AuthRoute exact path="/post/list" component={Posts} />
                 {/* Channels */}
-                <AuthRoute exact path="/channel/list" component={Channels} />
+                <AuthRoute exact path="/channel/list" component={ChannelsList} />
+                <AuthRoute exact path="/channel/ban/list" component={BanChannelsList} />
                 {/* Feedback */}
                 <AuthRoute exact path="/feedback/list" component={Feedback} />
                 {/* Transaction */}
                 <AuthRoute exact path="/transaction/list" component={Transaction} />
                 <AuthRoute exact path="/Withdrawals/list" component={Withdrawals} />
                 <AuthRoute exact path="/balances/list" component={Balances} />
+                {/* Setting */}
+                <AuthRoute exact path="/setting" component={Setting} />
                 {/* Authentication */}
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/forgotpassword" component={ForgotPassword} />

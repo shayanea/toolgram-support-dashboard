@@ -9,68 +9,66 @@ import { getFeedbacks } from "../actions/feedbackActions";
 
 const WrappedPortal = Portal.withNonScrollable(Portal.withESCToClose(Portal));
 
-class SendMessage extends Component {
-  state = {
-    message: "",
-    isLoading: false
-  };
+// class SendMessage extends Component {
+//   state = {
+//     message: "",
+//     isLoading: false
+//   };
 
-  handleChange = e => this.setState({ message: e.target.value });
+//   handleChange = e => this.setState({ message: e.target.value });
 
-  submit = () => {
-    if (this.state.message !== "") {
-      this.setState({ isLoading: true });
-      return axios
-        .post("/feedback/send", {})
-        .then(res => {
-          this.setState({ isLoading: false });
-          Notify.success("پاسخ با موفقیت ارسال گردید.", 5000);
-          this.props.hideModal();
-        })
-        .catch(err => {
-          this.setState({ isLoading: false });
-          Notify.error(err.data !== null && typeof err.data !== "undefined" ? err.data.error.errorDescription : "در برقراری ارتباط مشکلی به وجود آمده است.", 5000);
-        });
-    }
-  };
+//   submit = () => {
+//     if (this.state.message !== "") {
+//       this.setState({ isLoading: true });
+//       return axios
+//         .post("/feedback/send", {})
+//         .then(res => {
+//           this.setState({ isLoading: false });
+//           Notify.success("پاسخ با موفقیت ارسال گردید.", 5000);
+//           this.props.hideModal();
+//         })
+//         .catch(err => {
+//           this.setState({ isLoading: false });
+//           Notify.error(err.data !== null && typeof err.data !== "undefined" ? err.data.error.errorDescription : "در برقراری ارتباط مشکلی به وجود آمده است.", 5000);
+//         });
+//     }
+//   };
 
-  render() {
-    const { isLoading } = this.state;
-    const { modalStatus, hideModal } = this.props;
-    return (
-      <WrappedPortal visible={modalStatus} onClickAway={hideModal} onClose={hideModal} className="layer" style={{ background: "rgba(0, 0, 0, 0.2)" }} useLayerForClickAway>
-        <div className="custom-modal">
-          <div className="modal-header">
-            <span>ارسال پاسخ به کاربر</span>
-            <Icon type="close" onClick={hideModal} />
-          </div>
-          <div className="modal-body">
-            <label>متن پبام</label>
-            <Input type="textarea" onChange={this.handleChange} maxLength={100} showCount autoSize />
-          </div>
-          <div className="modal-footer">
-            <Button type="primary" onClick={this.submit} loading={isLoading}>
-              ارسال
-            </Button>
-          </div>
-        </div>
-      </WrappedPortal>
-    );
-  }
-}
+//   render() {
+//     const { isLoading } = this.state;
+//     const { modalStatus, hideModal } = this.props;
+//     return (
+//       <WrappedPortal visible={modalStatus} onClickAway={hideModal} onClose={hideModal} className="layer" style={{ background: "rgba(0, 0, 0, 0.2)" }} useLayerForClickAway>
+//         <div className="custom-modal">
+//           <div className="modal-header">
+//             <span>ارسال پاسخ به کاربر</span>
+//             <Icon type="close" onClick={hideModal} />
+//           </div>
+//           <div className="modal-body">
+//             <label>متن پبام</label>
+//             <Input type="textarea" onChange={this.handleChange} maxLength={100} showCount autoSize />
+//           </div>
+//           <div className="modal-footer">
+//             <Button type="primary" onClick={this.submit} loading={isLoading}>
+//               ارسال
+//             </Button>
+//           </div>
+//         </div>
+//       </WrappedPortal>
+//     );
+//   }
+// }
 
 class FeedbackList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pageSize: 10,
+      pageSize: 20,
       page: {
         current: 0,
         totalItem: 0
       },
       datasets: this.props.feedback.items,
-      accounts: [],
-      filters: [{ value: 1, text: "درخواست کمک یا سوال" }, { value: 2, text: "پیشنهاد یا انتقاد" }, { value: 3, text: "گزارش خطای سیستم" }, { value: 4, text: "سایر" }],
       modalStatus: false,
       selectedItem: null
     };

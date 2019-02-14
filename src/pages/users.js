@@ -99,6 +99,7 @@ class UsersList extends Component {
         name: "phoneNumber"
       }
     ];
+    const { isLoading } = this.props;
     const { datasets, page, searchText, filters } = this.state;
     return (
       <Container>
@@ -113,6 +114,7 @@ class UsersList extends Component {
         </SearchConatainer>
         <Table
           emptyLabel={"هیچ کاربری در این فهرست وجود ندارد."}
+          loading={isLoading}
           columns={columns}
           datasets={datasets}
           onChange={this.onChange.bind(this)}
